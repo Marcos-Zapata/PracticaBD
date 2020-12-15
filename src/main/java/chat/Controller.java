@@ -110,7 +110,21 @@ public class Controller {
         // Tenga en cuenta que las columnas 'id' y 'ts' generan el valor de sus atributos de forma automática. No
         // es necesario definir ningún valor para las mismas.
         // El 'id' del mensaje no es necesario recuperarlo.
-        //TODO: terminar despues de getChatRooms
+
+        try {
+            String consulta = "INSERT INTO messages (id,text,chatRoom,createdBy,ts) VALUES (?,?,?,?,?)";
+            PreparedStatement pstm = conn.prepareStatement(consulta,Statement.RETURN_GENERATED_KEYS);
+            pstm.setString(1,null);
+            pstm.setString(2,content);
+            pstm.setLong(3,chatRoompk);
+            pstm.setLong(4,userpk);
+            pstm.setString(5,null);
+            pstm.executeUpdate();
+        }catch (SQLException ERR){
+            System.err.println("Ha ocurrido un error en el envio del mensaje");
+            ERR.printStackTrace();
+
+        }
     }
 
     /**
@@ -125,7 +139,24 @@ public class Controller {
         // Tenga en cuenta que la consulta a la base de datos le devolverá un ResultSet que deberá transformar
         // en una lista de instancias de objetos Message. Consulte la clase chat.model.Message para ver como crear
         // instancias de la misma
-        //TODO: terminar despues de getChatRooms
+        //TODO: terminar despues de SendMessage
+        try {
+            List<Message> mensajes = new ArrayList<Message>();
+            ResultSet rs = null;
+            String consulta = "SELECT * FROM messages WHERE chatRoom = (?)";
+            PreparedStatement pstm = conn.prepareStatement(consulta);
+            pstm.setLong(1,chatRoompk);
+            pstm.executeQuery();
+            rs = pstm.getResultSet();
+            while(rs.next()) {
+                Message nuevo = new Message(rs.getString(2),rs.getString(4));
+                mensajes.add(nuevo);
+            }
+            return mensajes;
+        }catch (SQLException ERR){
+            System.err.println("Ha ocurrido un error al obtener los mensajes del servidor");
+            ERR.printStackTrace();
+        }
 
         return null;
     }
@@ -141,7 +172,22 @@ public class Controller {
         // Tenga en cuenta que la consulta a la base de datos le devolverá un ResultSet que deberá transformar
         // en una lista de instancias de objetos ChatRoom. Consulte la clase chat.model.ChatRoom para ver como crear
         // instancias de la misma
-
+        try {
+            List<ChatRoom> chatRooms = new ArrayList<ChatRoom>();
+            String consulta = "SELECT * FROM chatrooms";
+            ResultSet rs = null;
+            PreparedStatement pstm = conn.prepareStatement(consulta);
+            pstm.executeQuery();
+            rs = pstm.getResultSet();
+            while(rs.next()) {
+                ChatRoom nuevo = new ChatRoom(rs.getInt(1),rs.getString(2));
+                chatRooms.add(nuevo);
+            }
+            return chatRooms;
+        }catch (SQLException ERR){
+            System.err.println("Ha ocurrido un error al consultar las salas del chat");
+            ERR.printStackTrace();
+        }
         return null;
     }
 
