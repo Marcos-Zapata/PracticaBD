@@ -215,6 +215,16 @@ public class Controller {
         // y devuelva el número de mensajes borrados(número de filas afectadas por stmt.executeUpdate
         // para ello busque qué tipo de dato devuelve esta sentencia y qué significa
         //TODO: terminar despues de getChatRooms
+       try {
+           String consulta = "DELETE FROM messages WHERE chatRoom = (?) AND createdBy = (?)";
+           PreparedStatement pstm = conn.prepareStatement(consulta);
+           pstm.setLong(1,chatRoompk);
+           pstm.setString(2,nickname);
+           pstm.executeUpdate(); //Devuelve el numero de datos afectados por tanto basta con hacer un return
+       }catch (SQLException ERR){
+           System.err.println("Ha ocurrido un error al eliminar sus mensajes del chat");
+           ERR.printStackTrace();
+       }
         return 0;
     }
 }
