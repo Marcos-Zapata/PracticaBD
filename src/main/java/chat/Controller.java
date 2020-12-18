@@ -220,7 +220,7 @@ public class Controller {
            PreparedStatement pstm = conn.prepareStatement(consulta);
            pstm.setLong(1,chatRoompk);
            pstm.setString(2,nickname);
-           pstm.executeUpdate(); //Devuelve el numero de datos afectados por tanto basta con hacer un return
+           return pstm.executeUpdate(); //Devuelve el numero de datos afectados por tanto basta con hacer un return
        }catch (SQLException ERR){
            System.err.println("Ha ocurrido un error al eliminar sus mensajes del chat");
            ERR.printStackTrace();
